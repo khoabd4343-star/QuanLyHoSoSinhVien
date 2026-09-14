@@ -42,7 +42,11 @@
             txtMaLop = new TextBox();
             btnXemHoSo = new Button();
             btnDangXuat = new Button();
+            picAnhDaiDien = new PictureBox();
+            btnChonAnh = new Button();
+            btnLuuAnh = new Button();
             ((System.ComponentModel.ISupportInitialize)picLogoUTH).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)picAnhDaiDien).BeginInit();
             SuspendLayout();
             // 
             // lblTieuDe
@@ -88,7 +92,7 @@
             // lblHoTen
             // 
             lblHoTen.AutoSize = true;
-            lblHoTen.Location = new Point(77, 351);
+            lblHoTen.Location = new Point(77, 331);
             lblHoTen.Margin = new Padding(4, 0, 4, 0);
             lblHoTen.Name = "lblHoTen";
             lblHoTen.RightToLeft = RightToLeft.No;
@@ -98,7 +102,7 @@
             // 
             // txtHoTen
             // 
-            txtHoTen.Location = new Point(238, 351);
+            txtHoTen.Location = new Point(238, 324);
             txtHoTen.Margin = new Padding(4);
             txtHoTen.Name = "txtHoTen";
             txtHoTen.ReadOnly = true;
@@ -108,7 +112,7 @@
             // lblNgaySinh
             // 
             lblNgaySinh.AutoSize = true;
-            lblNgaySinh.Location = new Point(77, 436);
+            lblNgaySinh.Location = new Point(77, 391);
             lblNgaySinh.Margin = new Padding(4, 0, 4, 0);
             lblNgaySinh.Name = "lblNgaySinh";
             lblNgaySinh.Size = new Size(122, 23);
@@ -117,7 +121,7 @@
             // 
             // txtGioiTinh
             // 
-            txtGioiTinh.Location = new Point(646, 429);
+            txtGioiTinh.Location = new Point(238, 539);
             txtGioiTinh.Margin = new Padding(4);
             txtGioiTinh.Name = "txtGioiTinh";
             txtGioiTinh.ReadOnly = true;
@@ -127,7 +131,7 @@
             // lblGioiTinh
             // 
             lblGioiTinh.AutoSize = true;
-            lblGioiTinh.Location = new Point(532, 432);
+            lblGioiTinh.Location = new Point(77, 539);
             lblGioiTinh.Margin = new Padding(4, 0, 4, 0);
             lblGioiTinh.Name = "lblGioiTinh";
             lblGioiTinh.Size = new Size(101, 23);
@@ -136,7 +140,7 @@
             // 
             // txtNgaySinh
             // 
-            txtNgaySinh.Location = new Point(238, 425);
+            txtNgaySinh.Location = new Point(238, 384);
             txtNgaySinh.Margin = new Padding(4);
             txtNgaySinh.Name = "txtNgaySinh";
             txtNgaySinh.ReadOnly = true;
@@ -146,7 +150,7 @@
             // lblMaLop
             // 
             lblMaLop.AutoSize = true;
-            lblMaLop.Location = new Point(77, 513);
+            lblMaLop.Location = new Point(77, 467);
             lblMaLop.Margin = new Padding(4, 0, 4, 0);
             lblMaLop.Name = "lblMaLop";
             lblMaLop.Size = new Size(95, 23);
@@ -155,7 +159,7 @@
             // 
             // txtMaLop
             // 
-            txtMaLop.Location = new Point(238, 513);
+            txtMaLop.Location = new Point(238, 460);
             txtMaLop.Margin = new Padding(4);
             txtMaLop.Name = "txtMaLop";
             txtMaLop.ReadOnly = true;
@@ -164,7 +168,7 @@
             // 
             // btnXemHoSo
             // 
-            btnXemHoSo.Location = new Point(140, 636);
+            btnXemHoSo.Location = new Point(77, 636);
             btnXemHoSo.Margin = new Padding(4);
             btnXemHoSo.Name = "btnXemHoSo";
             btnXemHoSo.Size = new Size(218, 34);
@@ -175,7 +179,7 @@
             // 
             // btnDangXuat
             // 
-            btnDangXuat.Location = new Point(461, 636);
+            btnDangXuat.Location = new Point(401, 636);
             btnDangXuat.Margin = new Padding(4);
             btnDangXuat.Name = "btnDangXuat";
             btnDangXuat.Size = new Size(209, 34);
@@ -184,11 +188,44 @@
             btnDangXuat.UseVisualStyleBackColor = true;
             btnDangXuat.Click += btnDangXuat_Click_1;
             // 
+            // picAnhDaiDien
+            // 
+            picAnhDaiDien.BorderStyle = BorderStyle.FixedSingle;
+            picAnhDaiDien.Location = new Point(681, 206);
+            picAnhDaiDien.Name = "picAnhDaiDien";
+            picAnhDaiDien.Size = new Size(392, 341);
+            picAnhDaiDien.SizeMode = PictureBoxSizeMode.Zoom;
+            picAnhDaiDien.TabIndex = 14;
+            picAnhDaiDien.TabStop = false;
+            // 
+            // btnChonAnh
+            // 
+            btnChonAnh.Location = new Point(787, 553);
+            btnChonAnh.Name = "btnChonAnh";
+            btnChonAnh.Size = new Size(197, 53);
+            btnChonAnh.TabIndex = 15;
+            btnChonAnh.Text = "CHỌN ẢNH";
+            btnChonAnh.UseVisualStyleBackColor = true;
+            btnChonAnh.Click += btnChonAnh_Click;
+            // 
+            // btnLuuAnh
+            // 
+            btnLuuAnh.Location = new Point(787, 628);
+            btnLuuAnh.Name = "btnLuuAnh";
+            btnLuuAnh.Size = new Size(197, 50);
+            btnLuuAnh.TabIndex = 16;
+            btnLuuAnh.Text = "LƯU ẢNH";
+            btnLuuAnh.UseVisualStyleBackColor = true;
+            btnLuuAnh.Click += btnLuuAnh_Click;
+            // 
             // FormThongTinSinhVien
             // 
             AutoScaleDimensions = new SizeF(10F, 23F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1135, 729);
+            Controls.Add(btnLuuAnh);
+            Controls.Add(btnChonAnh);
+            Controls.Add(picAnhDaiDien);
             Controls.Add(btnDangXuat);
             Controls.Add(btnXemHoSo);
             Controls.Add(txtMaLop);
@@ -208,6 +245,7 @@
             Name = "FormThongTinSinhVien";
             Text = "FormThongTinSinhVien";
             ((System.ComponentModel.ISupportInitialize)picLogoUTH).EndInit();
+            ((System.ComponentModel.ISupportInitialize)picAnhDaiDien).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -228,5 +266,8 @@
         private TextBox txtMaLop;
         private Button btnXemHoSo;
         private Button btnDangXuat;
+        private PictureBox picAnhDaiDien;
+        private Button btnChonAnh;
+        private Button btnLuuAnh;
     }
 }

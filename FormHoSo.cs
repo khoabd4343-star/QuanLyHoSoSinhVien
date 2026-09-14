@@ -2,6 +2,8 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Windows.Forms;
+using ClosedXML.Excel;
+using System.IO;
 
 namespace QuanLyHoSoSinhVien
 {
@@ -388,6 +390,158 @@ namespace QuanLyHoSoSinhVien
             LoadHoSo();
 
             txtMaHoSo.Focus();
+        }
+
+        private void btnXuatExcel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvHoSo.Rows.Count == 0)
+                {
+                    MessageBox.Show(
+                        "Không có dữ liệu để xuất!",
+                        "Thông báo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+
+                    return;
+                }
+
+                using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+                {
+                    saveFileDialog.Filter =
+                        "Excel Workbook (*.xlsx)|*.xlsx";
+
+                    saveFileDialog.Title =
+                        "Lưu danh sách hồ sơ sinh viên";
+
+                    saveFileDialog.FileName =
+                        "DanhSachHoSoSinhVien.xlsx";
+
+                    if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        using (XLWorkbook workbook = new XLWorkbook())
+                        {
+                            var worksheet =
+                                workbook.Worksheets.Add(
+                                    "Danh sách hồ sơ"
+                                );
+
+                            // ================= TIÊU ĐỀ =================
+
+                            worksheet.Cell(1, 1).Value =
+                                "DANH SÁCH HỒ SƠ SINH VIÊN";
+
+                            worksheet.Range(
+                                1,
+                                1,
+                                1,
+                                dgvHoSo.Columns.Count
+                            ).Merge();
+
+                            worksheet.Cell(1, 1).Style.Font.Bold = true;
+                            worksheet.Cell(1, 1).Style.Font.FontSize = 16;
+
+                            worksheet.Cell(1, 1).Style.Alignment.Horizontal =
+                                XLAlignmentHorizontalValues.Center;
+
+
+                            // ================= TÊN CỘT =================
+
+                            for (
+                                int i = 0;
+                                i < dgvHoSo.Columns.Count;
+                                i++
+                            )
+                            {
+                                worksheet.Cell(
+                                    3,
+                                    i + 1
+                                ).Value =
+                                    dgvHoSo.Columns[i].HeaderText;
+
+                                worksheet.Cell(
+                                    3,
+                                    i + 1
+                                ).Style.Font.Bold = true;
+                            }
+
+
+                            // ================= DỮ LIỆU =================
+
+                            for (
+                                int i = 0;
+                                i < dgvHoSo.Rows.Count;
+                                i++
+                            )
+                            {
+                                for (
+                                    int j = 0;
+                                    j < dgvHoSo.Columns.Count;
+                                    j++
+                                )
+                                {
+                                    object value =
+                                        dgvHoSo.Rows[i]
+                                            .Cells[j]
+                                            .Value;
+
+                                    worksheet.Cell(
+                                        i + 4,
+                                        j + 1
+                                    ).Value =
+                                        value?.ToString() ?? "";
+                                }
+                            }
+
+
+                            // ================= CĂN CHỈNH =================
+
+                            worksheet.Columns().AdjustToContents();
+
+                            worksheet.Range(
+                                3,
+                                1,
+                                dgvHoSo.Rows.Count + 3,
+                                dgvHoSo.Columns.Count
+                            ).Style.Border.OutsideBorder =
+                                XLBorderStyleValues.Thin;
+
+                            worksheet.Range(
+                                3,
+                                1,
+                                dgvHoSo.Rows.Count + 3,
+                                dgvHoSo.Columns.Count
+                            ).Style.Border.InsideBorder =
+                                XLBorderStyleValues.Thin;
+
+
+                            // ================= LƯU FILE =================
+
+                            workbook.SaveAs(
+                                saveFileDialog.FileName
+                            );
+
+                            MessageBox.Show(
+                                "Xuất file Excel thành công!",
+                                "Thành công",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Lỗi xuất Excel: " + ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+            }
         }
     }
 }

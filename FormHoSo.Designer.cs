@@ -49,6 +49,7 @@
             dgvHoSo = new DataGridView();
             button1 = new Button();
             btnLamMoi = new Button();
+            btnXuatExcel = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvHoSo).BeginInit();
             SuspendLayout();
             // 
@@ -237,12 +238,24 @@
             btnLamMoi.TabIndex = 20;
             btnLamMoi.Text = "LÀM MỚI  ";
             btnLamMoi.UseVisualStyleBackColor = true;
-            btnLamMoi.Click += btnLamMoi_Click;            // 
+            btnLamMoi.Click += btnLamMoi_Click;
+            // 
+            // btnXuatExcel
+            // 
+            btnXuatExcel.Location = new Point(809, 284);
+            btnXuatExcel.Name = "btnXuatExcel";
+            btnXuatExcel.Size = new Size(133, 47);
+            btnXuatExcel.TabIndex = 21;
+            btnXuatExcel.Text = "XUẤT EXCEL";
+            btnXuatExcel.UseVisualStyleBackColor = true;
+            btnXuatExcel.Click += btnXuatExcel_Click;
+            // 
             // btnQuayLai
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1191, 638);
+            Controls.Add(btnXuatExcel);
             Controls.Add(btnLamMoi);
             Controls.Add(button1);
             Controls.Add(dgvHoSo);
@@ -295,5 +308,6 @@
         private DataGridView dgvHoSo;
         private Button button1;
         private Button btnLamMoi;
+        private Button btnXuatExcel;
     }
 }

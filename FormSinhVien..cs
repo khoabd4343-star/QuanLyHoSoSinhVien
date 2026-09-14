@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 
+
 namespace QuanLyHoSoSinhVien
 {
     public partial class FormSinhVien : Form
