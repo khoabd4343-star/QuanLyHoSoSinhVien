@@ -225,35 +225,176 @@ namespace QuanLyHoSoSinhVien
         {
             try
             {
+                string maHoSo = txtMaHoSo.Text.Trim();
+                string maSV = txtMaSV.Text.Trim();
+
+                if (string.IsNullOrEmpty(maHoSo) ||
+                    string.IsNullOrEmpty(maSV))
+                {
+                    MessageBox.Show(
+                        "Vui lòng chọn hồ sơ cần sửa!",
+                        "Thông báo",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return;
+                }
+
                 using (SqlConnection conn = Database.GetConnection())
                 {
-                    string query = @"UPDATE HOSOSINHVIEN
-                         SET CCCD = @CCCD,
-                             QueQuan = @QueQuan,
-                             DiaChi = @DiaChi,
-                             SDT = @SDT,
-                             Email = @Email
-                         WHERE MaHoSo = @MaHoSo";
-
-                    SqlCommand cmd = new SqlCommand(query, conn);
-
-                    cmd.Parameters.AddWithValue("@MaHoSo", txtMaHoSo.Text.Trim());
-                    cmd.Parameters.AddWithValue("@CCCD", txtCCCD.Text.Trim());
-                    cmd.Parameters.AddWithValue("@QueQuan", txtQueQuan.Text.Trim());
-                    cmd.Parameters.AddWithValue("@DiaChi", txtDiaChi.Text.Trim());
-                    cmd.Parameters.AddWithValue("@SDT", txtSDT.Text.Trim());
-                    cmd.Parameters.AddWithValue("@Email", txtEmail.Text.Trim());
-
                     conn.Open();
-                    cmd.ExecuteNonQuery();
 
-                    MessageBox.Show("Sửa hồ sơ thành công!");
-                    LoadHoSoTheoMaSV(txtMaSV.Text.Trim());
+                    // ==============================
+                    // 1. KIỂM TRA MÃ SV CÓ TỒN TẠI
+                    // ==============================
+
+                    string checkSinhVien = @"
+                SELECT COUNT(*)
+                FROM SINHVIEN
+                WHERE MaSV = @MaSV";
+
+                    using (SqlCommand cmdCheckSV =
+                           new SqlCommand(checkSinhVien, conn))
+                    {
+                        cmdCheckSV.Parameters.AddWithValue(
+                            "@MaSV", maSV
+                        );
+
+                        int tonTaiSV =
+                            Convert.ToInt32(
+                                cmdCheckSV.ExecuteScalar()
+                            );
+
+                        if (tonTaiSV == 0)
+                        {
+                            MessageBox.Show(
+                                "Mã sinh viên không tồn tại!",
+                                "Thông báo",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning
+                            );
+                            return;
+                        }
+                    }
+
+
+                    // ==========================================
+                    // 2. KIỂM TRA MÃ SV ĐÃ CÓ HỒ SƠ KHÁC CHƯA
+                    // ==========================================
+
+                    string checkTrung = @"
+                SELECT COUNT(*)
+                FROM HOSOSINHVIEN
+                WHERE MaSV = @MaSV
+                AND MaHoSo <> @MaHoSo";
+
+                    using (SqlCommand cmdCheckTrung =
+                           new SqlCommand(checkTrung, conn))
+                    {
+                        cmdCheckTrung.Parameters.AddWithValue(
+                            "@MaSV", maSV
+                        );
+
+                        cmdCheckTrung.Parameters.AddWithValue(
+                            "@MaHoSo", maHoSo
+                        );
+
+                        int trung =
+                            Convert.ToInt32(
+                                cmdCheckTrung.ExecuteScalar()
+                            );
+
+                        if (trung > 0)
+                        {
+                            MessageBox.Show(
+                                "Sinh viên này đã có hồ sơ. Không thể sử dụng Mã SV bị trùng!",
+                                "Thông báo",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning
+                            );
+                            return;
+                        }
+                    }
+
+
+                    // ==============================
+                    // 3. CẬP NHẬT HỒ SƠ
+                    // ==============================
+
+                    string query = @"
+                UPDATE HOSOSINHVIEN
+                SET MaSV = @MaSV,
+                    CCCD = @CCCD,
+                    QueQuan = @QueQuan,
+                    DiaChi = @DiaChi,
+                    SDT = @SDT,
+                    Email = @Email
+                WHERE MaHoSo = @MaHoSo";
+
+                    using (SqlCommand cmd =
+                           new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue(
+                            "@MaHoSo", maHoSo
+                        );
+
+                        cmd.Parameters.AddWithValue(
+                            "@MaSV", maSV
+                        );
+
+                        cmd.Parameters.AddWithValue(
+                            "@CCCD", txtCCCD.Text.Trim()
+                        );
+
+                        cmd.Parameters.AddWithValue(
+                            "@QueQuan", txtQueQuan.Text.Trim()
+                        );
+
+                        cmd.Parameters.AddWithValue(
+                            "@DiaChi", txtDiaChi.Text.Trim()
+                        );
+
+                        cmd.Parameters.AddWithValue(
+                            "@SDT", txtSDT.Text.Trim()
+                        );
+
+                        cmd.Parameters.AddWithValue(
+                            "@Email", txtEmail.Text.Trim()
+                        );
+
+                        int ketQua = cmd.ExecuteNonQuery();
+
+                        if (ketQua > 0)
+                        {
+                            MessageBox.Show(
+                                "Sửa hồ sơ thành công!",
+                                "Thông báo",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information
+                            );
+
+                            LoadHoSoTheoMaSV(maSV);
+                        }
+                        else
+                        {
+                            MessageBox.Show(
+                                "Không tìm thấy hồ sơ để cập nhật!",
+                                "Thông báo",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning
+                            );
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                MessageBox.Show(
+                    "Lỗi: " + ex.Message,
+                    "Lỗi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 

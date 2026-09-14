@@ -248,7 +248,6 @@
             pnlHoSoChuaHoanThien.Name = "pnlHoSoChuaHoanThien";
             pnlHoSoChuaHoanThien.Size = new Size(353, 156);
             pnlHoSoChuaHoanThien.TabIndex = 6;
-
             // 
             // lblHoSoChuaHoanThien
             // 
@@ -276,7 +275,7 @@
             // 
             AutoScaleDimensions = new SizeF(14F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1795, 783);
+            ClientSize = new Size(1795, 778);
             Controls.Add(pnlHoSoChuaHoanThien);
             Controls.Add(panel5);
             Controls.Add(panel4);

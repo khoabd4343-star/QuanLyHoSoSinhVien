@@ -57,7 +57,7 @@
             panelMenu.Dock = DockStyle.Left;
             panelMenu.Location = new Point(0, 0);
             panelMenu.Name = "panelMenu";
-            panelMenu.Size = new Size(240, 657);
+            panelMenu.Size = new Size(240, 894);
             panelMenu.TabIndex = 10;
             // 
             // pictureBox1
@@ -160,14 +160,14 @@
             // 
             panelNoiDung.Location = new Point(297, 0);
             panelNoiDung.Name = "panelNoiDung";
-            panelNoiDung.Size = new Size(1399, 657);
+            panelNoiDung.Size = new Size(1399, 894);
             panelNoiDung.TabIndex = 11;
             // 
             // FormMenu
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1732, 657);
+            ClientSize = new Size(1732, 894);
             Controls.Add(panelMenu);
             Controls.Add(panelNoiDung);
             Font = new Font("Segoe UI", 9F, FontStyle.Bold);
