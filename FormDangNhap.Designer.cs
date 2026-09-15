@@ -1,4 +1,4 @@
-﻿namespace QuanLyHoSoSinhVien
+namespace QuanLyHoSoSinhVien
 {
     partial class FormDangNhap
     {
@@ -45,109 +45,120 @@
             // 
             // lblTieuDe
             // 
-            lblTieuDe.AutoSize = true;
-            lblTieuDe.Font = new Font("Times New Roman", 12F, FontStyle.Bold);
-            lblTieuDe.Location = new Point(68, 361);
+            lblTieuDe.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblTieuDe.ForeColor = Color.White;
+            lblTieuDe.Location = new Point(10, 360);
             lblTieuDe.Name = "lblTieuDe";
-            lblTieuDe.Size = new Size(295, 23);
+            lblTieuDe.Size = new Size(410, 40);
             lblTieuDe.TabIndex = 0;
-            lblTieuDe.Text = "🎓QUẢN LÝ HỒ SƠ SINH VIÊN";
-            lblTieuDe.Click += label1_Click;
+            lblTieuDe.Text = "🎓 QUẢN LÝ HỒ SƠ SINH VIÊN";
+            lblTieuDe.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblDangNhap
             // 
             lblDangNhap.AutoSize = true;
-            lblDangNhap.Font = new Font("Times New Roman", 12F, FontStyle.Bold);
-            lblDangNhap.Location = new Point(552, 105);
+            lblDangNhap.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            lblDangNhap.ForeColor = Color.FromArgb(15, 23, 42);
+            lblDangNhap.Location = new Point(500, 60);
             lblDangNhap.Name = "lblDangNhap";
-            lblDangNhap.Size = new Size(239, 23);
+            lblDangNhap.Size = new Size(357, 41);
             lblDangNhap.TabIndex = 1;
             lblDangNhap.Text = "ĐĂNG NHẬP HỆ THỐNG";
             // 
             // lblTaiKhoan
             // 
             lblTaiKhoan.AutoSize = true;
-            lblTaiKhoan.Font = new Font("Times New Roman", 12F, FontStyle.Bold);
-            lblTaiKhoan.Location = new Point(552, 168);
+            lblTaiKhoan.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblTaiKhoan.ForeColor = Color.FromArgb(71, 85, 105);
+            lblTaiKhoan.Location = new Point(504, 135);
             lblTaiKhoan.Name = "lblTaiKhoan";
-            lblTaiKhoan.RightToLeft = RightToLeft.No;
-            lblTaiKhoan.Size = new Size(122, 23);
+            lblTaiKhoan.Size = new Size(104, 23);
             lblTaiKhoan.TabIndex = 2;
             lblTaiKhoan.Text = "TÀI KHOẢN";
+            // 
+            // txtTaiKhoan
+            // 
+            txtTaiKhoan.BorderStyle = BorderStyle.FixedSingle;
+            txtTaiKhoan.Font = new Font("Segoe UI", 11F);
+            txtTaiKhoan.ForeColor = Color.FromArgb(15, 23, 42);
+            txtTaiKhoan.Location = new Point(504, 165);
+            txtTaiKhoan.Name = "txtTaiKhoan";
+            txtTaiKhoan.Size = new Size(370, 32);
+            txtTaiKhoan.TabIndex = 4;
             // 
             // lblMatKhau
             // 
             lblMatKhau.AutoSize = true;
-            lblMatKhau.Font = new Font("Times New Roman", 12F, FontStyle.Bold);
-            lblMatKhau.Location = new Point(552, 241);
+            lblMatKhau.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblMatKhau.ForeColor = Color.FromArgb(71, 85, 105);
+            lblMatKhau.Location = new Point(504, 215);
             lblMatKhau.Name = "lblMatKhau";
-            lblMatKhau.Size = new Size(117, 23);
+            lblMatKhau.Size = new Size(100, 23);
             lblMatKhau.TabIndex = 3;
             lblMatKhau.Text = "MẬT KHẨU";
             // 
-            // txtTaiKhoan
-            // 
-            txtTaiKhoan.ForeColor = SystemColors.WindowText;
-            txtTaiKhoan.Location = new Point(552, 194);
-            txtTaiKhoan.Name = "txtTaiKhoan";
-            txtTaiKhoan.Size = new Size(280, 27);
-            txtTaiKhoan.TabIndex = 4;
-            // 
             // txtMatKhau
             // 
-            txtMatKhau.Location = new Point(552, 267);
+            txtMatKhau.BorderStyle = BorderStyle.FixedSingle;
+            txtMatKhau.Font = new Font("Segoe UI", 11F);
+            txtMatKhau.ForeColor = Color.FromArgb(15, 23, 42);
+            txtMatKhau.Location = new Point(504, 245);
             txtMatKhau.Name = "txtMatKhau";
-            txtMatKhau.Size = new Size(280, 27);
+            txtMatKhau.Size = new Size(370, 32);
             txtMatKhau.TabIndex = 5;
             txtMatKhau.UseSystemPasswordChar = true;
             // 
             // btnDangNhap
             // 
-            btnDangNhap.Font = new Font("Times New Roman", 12F, FontStyle.Bold);
-            btnDangNhap.ForeColor = SystemColors.MenuHighlight;
-            btnDangNhap.Location = new Point(519, 331);
+            btnDangNhap.BackColor = Color.FromArgb(37, 99, 235);
+            btnDangNhap.Cursor = Cursors.Hand;
+            btnDangNhap.FlatAppearance.BorderSize = 0;
+            btnDangNhap.FlatAppearance.MouseOverBackColor = Color.FromArgb(29, 78, 216);
+            btnDangNhap.FlatStyle = FlatStyle.Flat;
+            btnDangNhap.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnDangNhap.ForeColor = Color.White;
+            btnDangNhap.Location = new Point(504, 315);
             btnDangNhap.Name = "btnDangNhap";
-            btnDangNhap.Size = new Size(159, 39);
+            btnDangNhap.Size = new Size(180, 44);
             btnDangNhap.TabIndex = 6;
             btnDangNhap.Text = "ĐĂNG NHẬP";
-            btnDangNhap.UseVisualStyleBackColor = true;
+            btnDangNhap.UseVisualStyleBackColor = false;
             btnDangNhap.Click += btnDangNhap_Click;
             // 
             // btnThoat
             // 
-            btnThoat.Font = new Font("Times New Roman", 12F, FontStyle.Bold);
-            btnThoat.ForeColor = SystemColors.MenuHighlight;
-            btnThoat.Location = new Point(745, 331);
+            btnThoat.BackColor = Color.FromArgb(226, 232, 240);
+            btnThoat.Cursor = Cursors.Hand;
+            btnThoat.FlatAppearance.BorderSize = 0;
+            btnThoat.FlatAppearance.MouseOverBackColor = Color.FromArgb(203, 213, 225);
+            btnThoat.FlatStyle = FlatStyle.Flat;
+            btnThoat.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnThoat.ForeColor = Color.FromArgb(51, 65, 85);
+            btnThoat.Location = new Point(694, 315);
             btnThoat.Name = "btnThoat";
-            btnThoat.Size = new Size(162, 39);
+            btnThoat.Size = new Size(180, 44);
             btnThoat.TabIndex = 7;
             btnThoat.Text = "THOÁT";
-            btnThoat.UseVisualStyleBackColor = true;
+            btnThoat.UseVisualStyleBackColor = false;
             btnThoat.Click += btnThoat_Click;
             // 
             // panel1
             // 
+            panel1.BackColor = Color.FromArgb(30, 41, 59);
             panel1.Controls.Add(picLogin);
-            panel1.Controls.Add(panel2);
             panel1.Controls.Add(lblTieuDe);
-            panel1.Location = new Point(2, 2);
+            panel1.Dock = DockStyle.Left;
+            panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(475, 505);
+            panel1.Size = new Size(430, 480);
             panel1.TabIndex = 8;
-            // 
-            // panel2
-            // 
-            panel2.Location = new Point(473, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(515, 502);
-            panel2.TabIndex = 9;
             // 
             // picLogin
             // 
             picLogin.Image = Properties.Resources._66e7955b_f01b_4b2e_86fa_b4332f6feadc;
-            picLogin.Location = new Point(10, 21);
+            picLogin.Location = new Point(20, 40);
             picLogin.Name = "picLogin";
-            picLogin.Size = new Size(433, 309);
+            picLogin.Size = new Size(390, 300);
             picLogin.SizeMode = PictureBoxSizeMode.Zoom;
             picLogin.TabIndex = 10;
             picLogin.TabStop = false;
@@ -156,8 +167,8 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(991, 499);
-            Controls.Add(panel1);
+            BackColor = Color.FromArgb(248, 250, 252);
+            ClientSize = new Size(950, 480);
             Controls.Add(btnThoat);
             Controls.Add(btnDangNhap);
             Controls.Add(txtMatKhau);
@@ -165,11 +176,15 @@
             Controls.Add(lblMatKhau);
             Controls.Add(lblTaiKhoan);
             Controls.Add(lblDangNhap);
+            Controls.Add(panel1);
+            Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
             Name = "FormDangNhap";
-            Text = "FormDangNhap";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "ĐĂNG NHẬP HỆ THỐNG";
             Load += FormDangNhap_Load;
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)picLogin).EndInit();
             ResumeLayout(false);
             PerformLayout();

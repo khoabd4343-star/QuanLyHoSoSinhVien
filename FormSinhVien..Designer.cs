@@ -1,4 +1,4 @@
-﻿namespace QuanLyHoSoSinhVien
+namespace QuanLyHoSoSinhVien
 {
     partial class FormSinhVien
     {
@@ -46,6 +46,7 @@
             btnQuayLai = new Button();
             btnLamMoi = new Button();
             dtpNgaySinh = new DateTimePicker();
+            chkDoTre = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)dgvSinhVien).BeginInit();
             SuspendLayout();
             // 
@@ -124,6 +125,18 @@
             cboLop.Name = "cboLop";
             cboLop.Size = new Size(151, 28);
             cboLop.TabIndex = 9;
+            // 
+            // chkDoTre
+            // 
+            chkDoTre.AutoSize = true;
+            chkDoTre.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            chkDoTre.ForeColor = Color.FromArgb(71, 85, 105);
+            chkDoTre.Location = new Point(315, 246);
+            chkDoTre.Name = "chkDoTre";
+            chkDoTre.Size = new Size(145, 24);
+            chkDoTre.TabIndex = 22;
+            chkDoTre.Text = "Thêm độ trễ 10s";
+            chkDoTre.UseVisualStyleBackColor = true;
             // 
             // btnThem
             // 
@@ -228,6 +241,7 @@
             Controls.Add(btnXoa);
             Controls.Add(btnSua);
             Controls.Add(btnThem);
+            Controls.Add(chkDoTre);
             Controls.Add(cboLop);
             Controls.Add(cboGioiTinh);
             Controls.Add(txtMaSV);
@@ -257,6 +271,7 @@
         private TextBox txtMaSV;
         private ComboBox cboGioiTinh;
         private ComboBox cboLop;
+        private CheckBox chkDoTre;
         private Button btnThem;
         private Button btnSua;
         private Button btnXoa;

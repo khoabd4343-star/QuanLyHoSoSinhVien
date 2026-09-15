@@ -1,8 +1,7 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Drawing;
 using System.Linq;
