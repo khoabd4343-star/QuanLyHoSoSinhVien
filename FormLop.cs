@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
@@ -55,10 +55,19 @@ namespace QuanLyHoSoSinhVien
                 LOP.TenLop,
                 LOP.KhoaHoc,
                 LOP.MaNganh,
-                NGANH.TenNganh
+                NGANH.TenNganh,
+                CAST(COUNT(SINHVIEN.MaSV) AS VARCHAR) + '/30' AS SiSo
             FROM LOP
             INNER JOIN NGANH
-                ON LOP.MaNganh = NGANH.MaNganh";
+                ON LOP.MaNganh = NGANH.MaNganh
+            LEFT JOIN SINHVIEN
+                ON LOP.MaLop = SINHVIEN.MaLop
+            GROUP BY
+                LOP.MaLop,
+                LOP.TenLop,
+                LOP.KhoaHoc,
+                LOP.MaNganh,
+                NGANH.TenNganh";
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
 
@@ -67,6 +76,13 @@ namespace QuanLyHoSoSinhVien
                 adapter.Fill(dt);
 
                 dgvLop.DataSource = dt;
+
+                if (dgvLop.Columns.Contains("MaLop")) dgvLop.Columns["MaLop"].HeaderText = "Mã lớp";
+                if (dgvLop.Columns.Contains("TenLop")) dgvLop.Columns["TenLop"].HeaderText = "Tên lớp";
+                if (dgvLop.Columns.Contains("KhoaHoc")) dgvLop.Columns["KhoaHoc"].HeaderText = "Khóa học";
+                if (dgvLop.Columns.Contains("MaNganh")) dgvLop.Columns["MaNganh"].HeaderText = "Mã ngành";
+                if (dgvLop.Columns.Contains("TenNganh")) dgvLop.Columns["TenNganh"].HeaderText = "Tên ngành";
+                if (dgvLop.Columns.Contains("SiSo")) dgvLop.Columns["SiSo"].HeaderText = "Sĩ số (Tối đa 30)";
             }
         }
         // Thêm lớp
@@ -272,15 +288,24 @@ namespace QuanLyHoSoSinhVien
                 LOP.TenLop,
                 LOP.KhoaHoc,
                 LOP.MaNganh,
-                NGANH.TenNganh
+                NGANH.TenNganh,
+                CAST(COUNT(SINHVIEN.MaSV) AS VARCHAR) + '/30' AS SiSo
             FROM LOP
             INNER JOIN NGANH
                 ON LOP.MaNganh = NGANH.MaNganh
+            LEFT JOIN SINHVIEN
+                ON LOP.MaLop = SINHVIEN.MaLop
             WHERE LOP.MaLop LIKE @Keyword
                OR LOP.TenLop LIKE @Keyword
                OR LOP.MaNganh LIKE @Keyword
                OR NGANH.TenNganh LIKE @Keyword
-               OR LOP.KhoaHoc LIKE @Keyword";
+               OR LOP.KhoaHoc LIKE @Keyword
+            GROUP BY
+                LOP.MaLop,
+                LOP.TenLop,
+                LOP.KhoaHoc,
+                LOP.MaNganh,
+                NGANH.TenNganh";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
 
@@ -295,6 +320,13 @@ namespace QuanLyHoSoSinhVien
                 adapter.Fill(dt);
 
                 dgvLop.DataSource = dt;
+
+                if (dgvLop.Columns.Contains("MaLop")) dgvLop.Columns["MaLop"].HeaderText = "Mã lớp";
+                if (dgvLop.Columns.Contains("TenLop")) dgvLop.Columns["TenLop"].HeaderText = "Tên lớp";
+                if (dgvLop.Columns.Contains("KhoaHoc")) dgvLop.Columns["KhoaHoc"].HeaderText = "Khóa học";
+                if (dgvLop.Columns.Contains("MaNganh")) dgvLop.Columns["MaNganh"].HeaderText = "Mã ngành";
+                if (dgvLop.Columns.Contains("TenNganh")) dgvLop.Columns["TenNganh"].HeaderText = "Tên ngành";
+                if (dgvLop.Columns.Contains("SiSo")) dgvLop.Columns["SiSo"].HeaderText = "Sĩ số (Tối đa 30)";
             }
         }
 

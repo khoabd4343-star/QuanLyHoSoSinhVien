@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Data;
 
 
@@ -58,6 +58,9 @@ namespace QuanLyHoSoSinhVien
                 dgvSinhVien.Columns["NgaySinh"].DefaultCellStyle.Format =
                     "dd/MM/yyyy";
             }
+
+            // Cập nhật lại danh sách lớp và sĩ số
+            LoadLop();
         }
 
         // ================= LOAD LỚP =================
@@ -66,7 +69,13 @@ namespace QuanLyHoSoSinhVien
         {
             using (SqlConnection conn = Database.GetConnection())
             {
-                string query = "SELECT MaLop, TenLop FROM LOP";
+                string query = @"
+                    SELECT 
+                        L.MaLop, 
+                        L.TenLop + ' (' + CAST(COUNT(SV.MaSV) AS VARCHAR) + '/30)' AS TenLopHienThi
+                    FROM LOP L
+                    LEFT JOIN SINHVIEN SV ON L.MaLop = SV.MaLop
+                    GROUP BY L.MaLop, L.TenLop";
 
                 SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
                 DataTable table = new DataTable();
@@ -74,7 +83,7 @@ namespace QuanLyHoSoSinhVien
                 adapter.Fill(table);
 
                 cboLop.DataSource = table;
-                cboLop.DisplayMember = "TenLop";
+                cboLop.DisplayMember = "TenLopHienThi";
                 cboLop.ValueMember = "MaLop";
 
                 cboLop.SelectedIndex = -1;
@@ -117,7 +126,7 @@ namespace QuanLyHoSoSinhVien
                 return false;
             }
 
-            if (cboLop.SelectedIndex == -1)
+            if (cboLop.SelectedIndex == -1 || cboLop.SelectedValue == null)
             {
                 MessageBox.Show("Vui lòng chọn lớp!");
                 return false;
@@ -141,81 +150,184 @@ namespace QuanLyHoSoSinhVien
             txtMaSV.Focus();
         }
 
-        // ================= THÊM SINH VIÊN =================
+        // ================= THÊM SINH VIÊN (TRANSACTION TIẾP NHẬN & XẾP LỚP) =================
+
+        // ================= THÊM SINH VIÊN (TRANSACTION GIỚI HẠN 30 SV) =================
 
         private void btnThem_Click(object sender, EventArgs e)
         {
             if (!KiemTraDuLieu())
                 return;
 
-            try
+            string maSV = txtMaSV.Text.Trim();
+            string hoTen = txtHoTen.Text.Trim();
+            DateTime ngaySinh = dtpNgaySinh.Value.Date;
+            string gioiTinh = cboGioiTinh.Text;
+            string maLop = cboLop.SelectedValue?.ToString() ?? "";
+
+            if (string.IsNullOrEmpty(maLop))
             {
-                using (SqlConnection conn = Database.GetConnection())
+                MessageBox.Show("Vui lòng chọn lớp!");
+                return;
+            }
+
+            using (SqlConnection conn = Database.GetConnection())
+            {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
                 {
-                    string query = @"
+                    // BƯỚC 1: Thêm sinh viên vào CSDL (trong Transaction)
+                    string queryInsert = @"
                         INSERT INTO SINHVIEN
                         (MaSV, HoTen, NgaySinh, GioiTinh, MaLop)
                         VALUES
                         (@MaSV, @HoTen, @NgaySinh, @GioiTinh, @MaLop)";
 
-                    SqlCommand cmd = new SqlCommand(query, conn);
-
-                    cmd.Parameters.AddWithValue(
-                        "@MaSV",
-                        txtMaSV.Text.Trim()
-                    );
-
-                    cmd.Parameters.AddWithValue(
-                        "@HoTen",
-                        txtHoTen.Text.Trim()
-                    );
-
-                    cmd.Parameters.AddWithValue(
-                        "@NgaySinh",
-                        dtpNgaySinh.Value.Date
-                    );
-
-                    cmd.Parameters.AddWithValue(
-                        "@GioiTinh",
-                        cboGioiTinh.Text
-                    );
-
-                    cmd.Parameters.AddWithValue(
-                        "@MaLop",
-                        cboLop.SelectedValue.ToString()
-                    );
-
-                    conn.Open();
-
-                    int result = cmd.ExecuteNonQuery();
-
-                    if (result > 0)
+                    using (SqlCommand cmdInsert = new SqlCommand(queryInsert, conn, transaction))
                     {
-                        MessageBox.Show("Thêm sinh viên thành công!");
+                        cmdInsert.Parameters.AddWithValue("@MaSV", maSV);
+                        cmdInsert.Parameters.AddWithValue("@HoTen", hoTen);
+                        cmdInsert.Parameters.AddWithValue("@NgaySinh", ngaySinh);
+                        cmdInsert.Parameters.AddWithValue("@GioiTinh", gioiTinh);
+                        cmdInsert.Parameters.AddWithValue("@MaLop", maLop);
 
-                        LoadSinhVien();
-                        LamMoiForm();
+                        cmdInsert.ExecuteNonQuery();
                     }
+
+                    // BƯỚC 2: Kiểm tra sĩ số lớp đồng thời trong Transaction
+                    string queryCount = "SELECT COUNT(*) FROM SINHVIEN WHERE MaLop = @MaLopCheck";
+                    int siSoHienTai = 0;
+                    using (SqlCommand cmdCheck = new SqlCommand(queryCount, conn, transaction))
+                    {
+                        cmdCheck.Parameters.AddWithValue("@MaLopCheck", maLop);
+                        siSoHienTai = Convert.ToInt32(cmdCheck.ExecuteScalar());
+                    }
+
+                    // Kiểm tra vượt quá giới hạn 30 sinh viên
+                    if (siSoHienTai > 30)
+                    {
+                        throw new Exception($"Lớp đã đạt giới hạn tối đa (Sĩ số sau khi xếp: {siSoHienTai}/30 sinh viên)!");
+                    }
+
+                    // Thêm độ trễ 10 giây nếu được tick để giữ khóa phục vụ kiểm thử
+                    if (chkDoTre.Checked)
+                    {
+                        using (SqlCommand cmdDelay = new SqlCommand("WAITFOR DELAY '00:00:10'", conn, transaction))
+                        {
+                            cmdDelay.CommandTimeout = 30;
+                            cmdDelay.ExecuteNonQuery();
+                        }
+                    }
+
+                    // BƯỚC 3: Nếu mọi điều kiện hợp lệ -> COMMIT TRANSACTION
+                    transaction.Commit();
+
+                    MessageBox.Show(
+                        $"[TRANSACTION COMMIT]\nTiếp nhận sinh viên và xếp lớp thành công!\nSĩ số hiện tại của lớp: {siSoHienTai}/30",
+                        "Thông báo Transaction",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    LoadSinhVien();
+                    LamMoiForm();
                 }
-            }
-            catch (SqlException ex)
-            {
-                MessageBox.Show("Lỗi SQL: " + ex.Message);
+                catch (Exception ex)
+                {
+                    // Khi có lỗi hoặc vi phạm điều kiện -> ROLLBACK TRANSACTION
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch
+                    {
+                    }
+
+                    MessageBox.Show(
+                        $"[TRANSACTION ROLLBACK]\nLý do: {ex.Message}\nThao tác tiếp nhận sinh viên {maSV} đã được hủy bỏ hoàn toàn để bảo đảm tính nhất quán dữ liệu.",
+                        "Cảnh báo Transaction Rollback",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    LoadSinhVien();
+                }
             }
         }
 
-        // ================= SỬA SINH VIÊN =================
+        // ================= SỬA SINH VIÊN (TRANSACTION CHUYỂN LỚP & KHÓA TÀI NGUYÊN) =================
 
         private void button2_Click(object sender, EventArgs e)
         {
             if (!KiemTraDuLieu())
                 return;
 
-            try
+            string maSV = txtMaSV.Text.Trim();
+            string hoTen = txtHoTen.Text.Trim();
+            DateTime ngaySinh = dtpNgaySinh.Value.Date;
+            string gioiTinh = cboGioiTinh.Text;
+            string maLop = cboLop.SelectedValue?.ToString() ?? "";
+
+            if (string.IsNullOrEmpty(maLop))
             {
-                using (SqlConnection conn = Database.GetConnection())
+                MessageBox.Show("Vui lòng chọn lớp!");
+                return;
+            }
+
+            using (SqlConnection conn = Database.GetConnection())
+            {
+                conn.Open();
+                SqlTransaction transaction = conn.BeginTransaction();
+
+                try
                 {
-                    string query = @"
+                    // Lấy mã lớp hiện tại của sinh viên trước khi cập nhật
+                    string queryLopCu = "SELECT MaLop FROM SINHVIEN WHERE MaSV = @MaSV";
+                    string maLopCu = "";
+                    using (SqlCommand cmdGetOld = new SqlCommand(queryLopCu, conn, transaction))
+                    {
+                        cmdGetOld.Parameters.AddWithValue("@MaSV", maSV);
+                        object? res = cmdGetOld.ExecuteScalar();
+                        if (res == null || res == DBNull.Value)
+                        {
+                            throw new Exception("Không tìm thấy sinh viên cần sửa!");
+                        }
+                        maLopCu = res.ToString() ?? "";
+                    }
+
+                    bool laChuyenLop = !string.Equals(maLopCu, maLop, StringComparison.OrdinalIgnoreCase);
+
+                    if (laChuyenLop)
+                    {
+                        // BƯỚC 1: Khóa lớp hiện tại (Resource 1)
+                        string sqlLockLopCu = "UPDATE LOP SET TenLop = TenLop WHERE MaLop = @MaLopCu";
+                        using (SqlCommand cmdLock1 = new SqlCommand(sqlLockLopCu, conn, transaction))
+                        {
+                            cmdLock1.Parameters.AddWithValue("@MaLopCu", maLopCu);
+                            cmdLock1.ExecuteNonQuery();
+                        }
+
+                        // Độ trễ 10 giây ở GIỮA 2 tài nguyên để tạo điều kiện khóa chéo (Deadlock)
+                        if (chkDoTre.Checked)
+                        {
+                            using (SqlCommand cmdDelay = new SqlCommand("WAITFOR DELAY '00:00:10'", conn, transaction))
+                            {
+                                cmdDelay.CommandTimeout = 30;
+                                cmdDelay.ExecuteNonQuery();
+                            }
+                        }
+
+                        // BƯỚC 2: Đòi khóa lớp chuyển đến (Resource 2)
+                        string sqlLockLopMoi = "UPDATE LOP SET TenLop = TenLop WHERE MaLop = @MaLopMoi";
+                        using (SqlCommand cmdLock2 = new SqlCommand(sqlLockLopMoi, conn, transaction))
+                        {
+                            cmdLock2.Parameters.AddWithValue("@MaLopMoi", maLop);
+                            cmdLock2.ExecuteNonQuery();
+                        }
+                    }
+
+                    // BƯỚC 3: Cập nhật thông tin sinh viên
+                    string queryUpdate = @"
                         UPDATE SINHVIEN
                         SET
                             HoTen = @HoTen,
@@ -224,53 +336,71 @@ namespace QuanLyHoSoSinhVien
                             MaLop = @MaLop
                         WHERE MaSV = @MaSV";
 
-                    SqlCommand cmd = new SqlCommand(query, conn);
-
-                    cmd.Parameters.AddWithValue(
-                        "@MaSV",
-                        txtMaSV.Text.Trim()
-                    );
-
-                    cmd.Parameters.AddWithValue(
-                        "@HoTen",
-                        txtHoTen.Text.Trim()
-                    );
-
-                    cmd.Parameters.AddWithValue(
-                        "@NgaySinh",
-                        dtpNgaySinh.Value.Date
-                    );
-
-                    cmd.Parameters.AddWithValue(
-                        "@GioiTinh",
-                        cboGioiTinh.Text
-                    );
-
-                    cmd.Parameters.AddWithValue(
-                        "@MaLop",
-                        cboLop.SelectedValue.ToString()
-                    );
-
-                    conn.Open();
-
-                    int result = cmd.ExecuteNonQuery();
-
-                    if (result > 0)
+                    using (SqlCommand cmdUpdate = new SqlCommand(queryUpdate, conn, transaction))
                     {
-                        MessageBox.Show("Sửa thông tin thành công!");
+                        cmdUpdate.Parameters.AddWithValue("@MaSV", maSV);
+                        cmdUpdate.Parameters.AddWithValue("@HoTen", hoTen);
+                        cmdUpdate.Parameters.AddWithValue("@NgaySinh", ngaySinh);
+                        cmdUpdate.Parameters.AddWithValue("@GioiTinh", gioiTinh);
+                        cmdUpdate.Parameters.AddWithValue("@MaLop", maLop);
 
-                        LoadSinhVien();
-                        LamMoiForm();
+                        cmdUpdate.ExecuteNonQuery();
                     }
-                    else
+
+                    // BƯỚC 4: Kiểm tra sĩ số lớp đích trong Transaction
+                    string queryCount = "SELECT COUNT(*) FROM SINHVIEN WHERE MaLop = @MaLopCheck";
+                    int siSoHienTai = 0;
+                    using (SqlCommand cmdCheck = new SqlCommand(queryCount, conn, transaction))
                     {
-                        MessageBox.Show("Không tìm thấy sinh viên cần sửa!");
+                        cmdCheck.Parameters.AddWithValue("@MaLopCheck", maLop);
+                        siSoHienTai = Convert.ToInt32(cmdCheck.ExecuteScalar());
                     }
+
+                    if (siSoHienTai > 30)
+                    {
+                        throw new Exception($"Lớp chuyển đến đã vượt quá giới hạn (Sĩ số: {siSoHienTai}/30 sinh viên)!");
+                    }
+
+                    // Nếu không đổi lớp nhưng có tick trễ -> giữ khóa sinh viên để kiểm thử Lock Wait
+                    if (!laChuyenLop && chkDoTre.Checked)
+                    {
+                        using (SqlCommand cmdDelay = new SqlCommand("WAITFOR DELAY '00:00:10'", conn, transaction))
+                        {
+                            cmdDelay.CommandTimeout = 30;
+                            cmdDelay.ExecuteNonQuery();
+                        }
+                    }
+
+                    // BƯỚC 5: COMMIT TRANSACTION
+                    transaction.Commit();
+
+                    MessageBox.Show(
+                        $"[TRANSACTION COMMIT]\nCập nhật thông tin và chuyển lớp thành công!\nSĩ số lớp mới: {siSoHienTai}/30",
+                        "Thông báo Transaction",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+
+                    LoadSinhVien();
+                    LamMoiForm();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                catch (Exception ex)
+                {
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch
+                    {
+                    }
+
+                    MessageBox.Show(
+                        $"[TRANSACTION ROLLBACK]\nLý do: {ex.Message}\nThao tác sửa thông tin / chuyển lớp đã bị hủy bỏ hoàn toàn.",
+                        "Cảnh báo Transaction Rollback",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    LoadSinhVien();
+                }
             }
         }
 
