@@ -213,7 +213,7 @@
             // dgvHoSo
             // 
             dgvHoSo.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvHoSo.Location = new Point(58, 404);
+            dgvHoSo.Location = new Point(12, 420);
             dgvHoSo.Name = "dgvHoSo";
             dgvHoSo.RowHeadersWidth = 51;
             dgvHoSo.Size = new Size(1093, 222);

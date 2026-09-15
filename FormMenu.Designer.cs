@@ -57,7 +57,7 @@
             panelMenu.Dock = DockStyle.Left;
             panelMenu.Location = new Point(0, 0);
             panelMenu.Name = "panelMenu";
-            panelMenu.Size = new Size(240, 894);
+            panelMenu.Size = new Size(222, 894);
             panelMenu.TabIndex = 10;
             // 
             // pictureBox1
